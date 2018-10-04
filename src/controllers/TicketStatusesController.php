@@ -102,6 +102,7 @@ class TicketStatusesController extends Controller
         $ticketStatus->colour = $request->post('colour');
         $ticketStatus->default = $request->post('default');
         $ticketStatus->newMessage = $request->post('newMessage');
+        $ticketStatus->requiresAgent = $request->post('requiresAgent');
         $emailIds = $request->post('emails');
 
         if (!$emailIds) {

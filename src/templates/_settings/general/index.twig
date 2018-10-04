@@ -42,15 +42,16 @@
       warning:      'fromEmail' in overrides ? macros.configWarning('fromEmail'),
   })}}
 
-  {{ forms.textField({
-      label:        'From Name',
-      instructions: 'The "From" name that will be used when sending ticket notification emails. Leave blank to use the Sender Name defined in Craft’s General Settings.',
-      id:           'fromName',
-      name:         'settings[fromName]',
-      placeholder:  systemSender,
-      value:        settings.fromName,
-      disabled:     'fromName' in overrides,
-      warning:      'fromName' in overrides ? macros.configWarning('fromName'),
-  })}}
+
+    {{ forms.textField({
+        label:        'From Name',
+        instructions: 'The "From" name that will be used when sending ticket notification emails. Leave blank to use the Sender Name defined in Craft’s General Settings.',
+        id:           'fromName',
+        name:         'settings[fromName]',
+        placeholder:  systemSender,
+        value:        settings.fromName,
+        disabled:     'fromName' in overrides,
+        warning:      'fromName' in overrides ? macros.configWarning('fromName'),
+    })}}
 
 {% endblock %}

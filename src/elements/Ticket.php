@@ -31,11 +31,14 @@ class Ticket extends Element
 
     public $authorId;
 
+    public $agentId;
+
     public $_ticketStatus;
 
     public $_author;
 
     public $_messages;
+    public $_agent;
 
     // Static Methods
     // =========================================================================
@@ -243,6 +246,23 @@ class Ticket extends Element
         return $this->_ticketStatus;
     }
 
+    public function getAgent()
+    {
+        if ($this->_agent !== null) {
+            return $this->_agent;
+        }
+
+        if ($this->agentId === null) {
+            return null;
+        }
+
+        if (($this->_agent = Craft::$app->getUsers()->getUserById($this->agentId)) === null) {
+            throw new InvalidConfigException('Invalid agent ID: '.$this->agentId);
+        }
+
+        return $this->_agent;
+    }
+
     public function getAuthor()
     {
         if ($this->_author !== null) {
@@ -295,12 +315,14 @@ class Ticket extends Element
                     'id'             => $this->id,
                     'ticketStatusId' => $this->ticketStatusId,
                     'authorId'       => $this->authorId,
+                    'agentId'  => $this->agentId,
                 ])
                 ->execute();
         } else {
             Craft::$app->db->createCommand()
                 ->update('{{%support_tickets}}', [
                     'ticketStatusId'  => $this->ticketStatusId,
+                    'agentId'  => $this->agentId,
                 ], ['id' => $this->id])
                 ->execute();
         }

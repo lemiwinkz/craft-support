@@ -118,6 +118,15 @@
       errors:  ticketStatus.getErrors('newMessage')
   })}}
 
+    {{ forms.checkboxField({
+        label:   'Wether this status requires an agent to be present for this status to be activated.',
+        name:    'requiresAgent',
+        value:   1,
+        checked: ticketStatus.requiresAgent,
+        errors:  ticketStatus.getErrors('requiresAgent')
+    })}}
+
+
 {% endblock %}
 
 {% js %}

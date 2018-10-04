@@ -60,10 +60,14 @@ class TicketService extends Component
         return null;
     }
 
-    public function changeTicketStatus($ticket = null, $ticketStatusId = null)
+    public function changeTicketStatus(Ticket $ticket = null, int $ticketStatusId = null)
     {
         if ($ticket->id && $ticketStatusId) {
             $status = Support::getInstance()->ticketStatusService->getTicketStatusById($ticketStatusId);
+
+            if ($status->requiresAgent && !$ticket->agentId) {
+                throw new \InvalidArgumentException('Not allowed to set this status without a valid support agent.');
+            }
 
             if (!$status->id) {
                 throw new NotFoundHttpException('Ticket status not found');

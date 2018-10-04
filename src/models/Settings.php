@@ -45,6 +45,7 @@ class Settings extends Model
 
     public $volumeId;
 
+
     public $volumeSubpath = 'attachments/{id}';
 
     // Public Methods

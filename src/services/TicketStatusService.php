@@ -39,6 +39,9 @@ class TicketStatusService extends Component
     // Public Methods
     // =========================================================================
 
+    /**
+     * @return array
+     */
     public function getAllTicketStatuses()
     {
         if (!$this->_fetchedAllStatuses) {
@@ -54,6 +57,11 @@ class TicketStatusService extends Component
         return $this->_ticketStatusesById;
     }
 
+    /**
+     * @param $id
+     *
+     * @return TicketStatusModel
+     */
     public function getTicketStatusById($id)
     {
         $result = $this->_createTicketStatusQuery()
@@ -63,6 +71,9 @@ class TicketStatusService extends Component
         return new TicketStatusModel($result);
     }
 
+    /**
+     * @return TicketStatusModel
+     */
     public function getDefaultTicketStatus()
     {
         $result = $this->_createTicketStatusQuery()
@@ -72,6 +83,9 @@ class TicketStatusService extends Component
         return new TicketStatusModel($result);
     }
 
+    /**
+     * @return TicketStatusModel
+     */
     public function getNewMessageTicketStatus()
     {
         $result = $this->_createTicketStatusQuery()
@@ -81,6 +95,11 @@ class TicketStatusService extends Component
         return new TicketStatusModel($result);
     }
 
+    /**
+     * @param $id
+     *
+     * @return mixed
+     */
     public function checkIfTicketStatusInUse($id)
     {
         $result = Ticket::find()
@@ -90,6 +109,12 @@ class TicketStatusService extends Component
         return $result;
     }
 
+    /**
+     * @param array $ids
+     *
+     * @return bool
+     * @throws \yii\db\Exception
+     */
     public function reorderTicketStatuses(array $ids)
     {
         foreach ($ids as $sortOrder => $id) {
@@ -101,6 +126,17 @@ class TicketStatusService extends Component
         return true;
     }
 
+    /**
+     * @param TicketStatusModel $model
+     * @param array             $emailIds
+     * @param bool              $runValidation
+     *
+     * @return bool
+     * @throws Exception
+     * @throws \Exception
+     * @throws \Throwable
+     * @throws \yii\db\Exception
+     */
     public function saveTicketStatus(TicketStatusModel $model, array $emailIds, bool $runValidation = true)
     {
         if ($model->id) {
@@ -122,6 +158,7 @@ class TicketStatusService extends Component
 
         $record->name = $model->name;
         $record->handle = $model->handle;
+        $record->requiresAgent = $model->requiresAgent;
         $record->colour = $model->colour;
         $record->sortOrder = $model->sortOrder ?: 999;
         $record->default = $model->default;
@@ -184,6 +221,14 @@ class TicketStatusService extends Component
         return true;
     }
 
+    /**
+     * @param $id
+     *
+     * @return bool|false|int
+     * @throws \Exception
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
+     */
     public function deleteTicketStatusbyId($id)
     {
         $statuses = $this->getAllTicketStatuses();
@@ -222,6 +267,7 @@ class TicketStatusService extends Component
                 'name',
                 'handle',
                 'colour',
+                'requiresAgent',
                 'sortOrder',
                 'default',
                 'newMessage',

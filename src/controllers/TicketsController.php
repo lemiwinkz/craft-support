@@ -136,18 +136,34 @@ class TicketsController extends Controller
 
         if ($ticketId) {
             $ticket = Support::getInstance()->ticketService->getTicketById($ticketId);
-
+            $ticket->agentId = $request->getBodyParam('agentId.0', $ticket->agentId);
             if (!$ticket) {
                 throw new NotFoundHttpException('Ticket not found');
             }
 
-            if ($request->post('ticketStatusId')) {
-                Support::getInstance()->ticketService->changeTicketStatus($ticket, $ticketStatusId);
+            $transaction = Craft::$app->getDb()->getTransaction() === null
+                ? Craft::$app->getDb()->beginTransaction()
+                : null;
+
+            try {
+                // Save the element and any new agents it may have.
+                Craft::$app->getElements()->saveElement($ticket, false);
+
+                // Changing the status may not be allowed so we do this last.
+                if ($request->post('ticketStatusId')) {
+                    Support::getInstance()->ticketService->changeTicketStatus($ticket, $ticketStatusId);
+                }
+
+                Craft::$app->getSession()->setNotice('Ticket updated.');
+                if ($transaction !== null) {
+                    $transaction->commit();
+                }
+            } catch (\Throwable $exception) {
+                if ($transaction !== null) {
+                    $transaction->rollBack();
+                }
+                Craft::$app->getSession()->setError($exception->getMessage());
             }
-
-            Craft::$app->getElements()->saveElement($ticket, false);
-
-            Craft::$app->getSession()->setNotice('Ticket updated.');
         }
 
         return $this->redirectToPostedUrl();

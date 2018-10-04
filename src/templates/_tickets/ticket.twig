@@ -79,6 +79,7 @@
 
 {% block details %}
   {% if currentUser.can('support-manageTickets') %}
+
     <form method="post" accept-charset="UTF-8">
       <div class="meta">
         {{ csrfInput() }}
@@ -92,6 +93,16 @@
             name:  'ticketId',
             value: ticket.id|hash,
         })}}
+
+          {{ forms.elementSelectField({
+              label: 'Add agent',
+              id: 'agentId',
+              name: 'agentId',
+              elements: [ticket.getAgent()],
+              limit: 1,
+              elementType: 'craft\\elements\\User',
+              selectionLabel: "Click here",
+          }) }}
 
         {% set statusOptions = [] %}
         {% for status in ticketStatuses %}
@@ -164,3 +175,4 @@
 
   <hr>
 {% endblock %}
+

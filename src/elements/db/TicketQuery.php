@@ -23,6 +23,7 @@ class TicketQuery extends ElementQuery
     public $authorId;
 
     public $author;
+    public $agentId;
 
     public $ticketStatus;
 
@@ -33,6 +34,18 @@ class TicketQuery extends ElementQuery
         return $this;
     }
 
+    public function agent($value)
+    {
+        if ($value instanceof User) {
+            $this->agentId = $value->id;
+        } elseif ($value !== null) {
+            $this->agentId = $value;
+        } else {
+            $this->agentId = null;
+        }
+
+        return $this;
+    }
     public function authorId($value)
     {
         $this->authorId = $value;
@@ -75,6 +88,7 @@ class TicketQuery extends ElementQuery
         $this->query->select([
             'support_tickets.ticketStatusId',
             'support_tickets.authorId',
+            'support_tickets.agentId',
         ]);
 
         if ($this->ticketStatusId) {
@@ -83,6 +97,10 @@ class TicketQuery extends ElementQuery
 
         if ($this->authorId) {
             $this->subQuery->andWhere(Db::parseParam('support_tickets.authorId', $this->authorId));
+        }
+
+        if ($this->agentId) {
+            $this->subQuery->andWhere(Db::parseParam('support_tickets.agentId', $this->agentId));
         }
 
         return parent::beforePrepare();
